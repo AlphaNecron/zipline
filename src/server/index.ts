@@ -64,11 +64,8 @@ async function start() {
         ],
       },
     });
-    console.log(image);
-
     if (!image) await rawFile(req, res, nextServer, params.id);
-    else if (image.password) await handle(req, res);
-    else if (image.embed) await handle(req, res);
+    else if (image.password || image.embed) await handle(req, res);
     else await fileDb(req, res, nextServer, prisma, handle, image);
   });
 
@@ -99,11 +96,8 @@ async function start() {
     process.exit(1);
   });
 
-  http.on('listening', () => {
-    logger.info(`Listening on ${config.core.host}:${config.core.port}`);
-  });
-
-  http.listen(config.core.port, config.core.host ?? '0.0.0.0');
+  http.listen(config.core.port, config.core.host ?? '0.0.0.0', null,
+    () => logger.info(`Listening on ${config.core.host}:${config.core.port}`));
 
   stats(prisma);
 }
